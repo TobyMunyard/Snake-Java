@@ -3,8 +3,13 @@ import java.awt.event.*;
 import java.awt.*;
 import java.util.Random;
 
+/**
+* Class for playing the classic game snake. Creates a JPanel that is passed to the
+* GameFrame class to be called in SnakeGame's main method to be displayed to the user.
+*/
 public class GamePanel extends JPanel implements ActionListener {
 
+    //data fields
     static final int SCREEN_WIDTH = 600;
     static final int SCREEN_HEIGHT = 600;
     static final int UNIT_SIZE = 25;
@@ -20,6 +25,9 @@ public class GamePanel extends JPanel implements ActionListener {
     Timer timer;
     Random random;
 
+    /**
+     * Constructor for creating the game panel within GameFrame
+     */
     GamePanel(){
         random = new Random();
         this.setPreferredSize(new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT));
@@ -29,6 +37,10 @@ public class GamePanel extends JPanel implements ActionListener {
         startGame();
     }
 
+    /**
+     * Starts the game by creating the first apple, setting running to true and
+     * starting the timer.
+     */
     public void startGame(){
         newApple();
         running = true;
@@ -36,10 +48,20 @@ public class GamePanel extends JPanel implements ActionListener {
         timer.start();
     }
 
+    /**
+     * Calls the draw method that draws the content of the screen.
+     * @param Graphics object to draw.
+     */
     public void paintComponent(Graphics g){
         super.paintComponent(g);
+        draw(g);
     }
 
+    /**
+     * If the game is running will draw the game on screen. If game is not running it
+     * will instead call the gameOver method.
+     * @param g Graphics object to draw.
+     */
     public void draw(Graphics g){
 
         if(running){
@@ -68,11 +90,18 @@ public class GamePanel extends JPanel implements ActionListener {
         }
     }
 
+    /**
+     * Creates a new apple at a random x and y location within the screen size.
+     */
     public void newApple(){
         appleX = random.nextInt((int) (SCREEN_WIDTH / UNIT_SIZE)) * UNIT_SIZE;
         appleY = random.nextInt((int) (SCREEN_WIDTH / UNIT_SIZE)) * UNIT_SIZE;
     }
 
+    /**
+     * Moves the mody of the snake depending on the input from the player. Uses
+     * the direction char to determine the direction.
+     */
     public void move() {
         for(int i = bodyParts; i > 0; i--){
             x[i] = x[i-1];
@@ -95,6 +124,10 @@ public class GamePanel extends JPanel implements ActionListener {
         }
     }
 
+    /**
+     * Checks if the snake has eaten the apple and if so it increments the body size 
+     * and applesEaten count as well as creates a new apple.
+     */
     public void checkApple() {
         if(x[0] == appleX && y[0] == appleY){
             bodyParts++;
@@ -103,6 +136,10 @@ public class GamePanel extends JPanel implements ActionListener {
         }
     }
 
+    /**
+     * Checks repeatedly if head has touched the body or any of the borders of the screen.
+     * Also stops the timer if the game stops running.
+     */
     public void checkCollisions() {
         //checks if head collides with body
         for(int i = bodyParts; i > 0; i--) {
@@ -132,6 +169,11 @@ public class GamePanel extends JPanel implements ActionListener {
         }
     }
 
+    /**
+     * Draws a game over screen displaying score and game over text. Font is comic sans.
+     * Only called if game stops running.
+     * @param g Graphics object to draw.
+     */
     public void gameOver(Graphics g) {
         //Score
         g.setColor(Color.red);
@@ -145,6 +187,11 @@ public class GamePanel extends JPanel implements ActionListener {
         g.drawString("Game Over", (SCREEN_WIDTH - metrics2.stringWidth("Game Over")) / 2, SCREEN_HEIGHT / 2);
     }
 
+    /**
+     * Runs methods needed to make game function at all times, repaints the screen
+     * to reflect what is happening.
+     * @param e An ActionEvent to indicate something is happening.
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         if(running){
@@ -155,8 +202,16 @@ public class GamePanel extends JPanel implements ActionListener {
         repaint();
     }
 
+    /**
+     * Inner class that extends KeyAdapter that is used to check inputs from user.
+     */
     public class MyKeyAdapter extends KeyAdapter {
 
+        /**
+        * Method for getting the key pressed by the user. Changes direction char and
+        * as such direction of snake.
+        * @param event An event triggered by user input.
+        */
         @Override
         public void keyPressed(KeyEvent event) {
             switch(event.getKeyCode()){
